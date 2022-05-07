@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User as AuthUser
 
-from mainapp.models import User, UserRole
+from mainapp.models import User, UserRole, Project, Task
 
 
 class Command(BaseCommand):
@@ -38,3 +38,18 @@ class Command(BaseCommand):
         AuthUser.objects.create_superuser('admin', 'admin@admin.local',
                                           'admin', first_name='admin')
 
+        Project.objects.all().delete()
+        Project.objects.create(name='Curiosity', repo='https://github/curiosity',
+                               owner=User.objects.get(last_name='Ivanov'),
+                            )
+
+        Task.objects.all().delete()
+        Task.objects.create(created_by=User.objects.get(last_name='Fedorov'),
+                            Project=Project.objects.get(name='Curiosity'),
+                            description='измерить расстояние до Марса'
+                               )
+
+        Task.objects.create(created_by=User.objects.get(last_name='Ivanov'),
+                            Project=Project.objects.get(name='Curiosity'),
+                            description='взять образец грунта'
+                            )
