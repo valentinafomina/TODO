@@ -1,6 +1,6 @@
 from rest_framework.serializers import HyperlinkedModelSerializer, \
-    PrimaryKeyRelatedField, SlugRelatedField
-from .models import User, UserRole
+    PrimaryKeyRelatedField, SlugRelatedField, ModelSerializer
+from .models import User, UserRole, Task, Project
 
 
 class UserRoleModelSerializer(HyperlinkedModelSerializer):
@@ -20,3 +20,18 @@ class UserModelSerializer(HyperlinkedModelSerializer):
         fields = ['username', 'first_name', 'last_name', 'email', 'role']
 
 
+class ProjectModelSerializer(ModelSerializer):
+    queryset = Project.objects.all()
+
+    class Meta:
+        model = Project
+        exclude = ['closed_date', 'updated_at']
+
+
+class TaskModelSerializer(ModelSerializer):
+    Project = SlugRelatedField(queryset=Project.objects.all(),
+                            slug_field='name')
+
+    class Meta:
+        model = Task
+        fields =['Project', 'assigned_to', 'created_by', 'updated_at']
