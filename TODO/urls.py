@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from mainapp.views import UserModelViewSet, UserRoleModelViewSet, \
-    ProjectModelViewSet, TaskModelViewSet
+    ProjectModelViewSet, TaskModelViewSet, UserRetrieveUpdatelViewSet
 
 
 router = DefaultRouter()
@@ -16,5 +16,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
+    path('api/users/<int:pk>/retrieve-update',
+         UserRetrieveUpdatelViewSet.as_view(), name='user_retrieve_update'),
+
 ]
 
