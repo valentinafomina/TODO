@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios'
-import {HashRouter, BrowserRouter, Route, NavLink} from 'react-router-dom'
+import {BrowserRouter, Route, NavLink} from 'react-router-dom'
 
 import UserList from './components/Users.js'
 import ProjectList from './components/Projects.js'
@@ -18,23 +17,26 @@ class App extends React.Component {
             'tasks': []
         }
     }
-    componentDidMount() {
 
-        const requestUser = 'http://127.0.0.1:8000/api/users'
-        const requestProject = 'http://127.0.0.1:8000/api/projects'
-        const requestTask = 'http://127.0.0.1:8000/api/tasks'
+    requestUser = () => axios.get('http://127.0.0.1:8000/api/').catch(err => null);
+    requestProject = () => axios.get('http://127.0.0.1:8000/api/projects').catch(err => null);
+    requestTask = () => axios.get('http://127.0.0.1:8000/api/tasks').catch(err => null);
 
-        axios.all([requestUser, requestProject, requestTask])
-            .then(axios.spread((responses) => {
-                const responseOne = responses[0].data.responses
-                const responseTwo = responses[1].data.responses
-                const responseThree = responses[2].data.responses
+    async componentDidMount() {
 
-                console.log(responseOne, responseTwo, responseThree)
-                })
-            )
-            .catch(errors => {console.error(errors)
-            })
+        try {
+            const [UserData, ProjectsData, TaskData] =
+            await axios.all([this.requestUser(), this.requestProject(), this.requestTask()]);
+
+                this.setState({
+                    'users': UserData.data,
+                    'projects': ProjectsData.data.results,
+                    'tasks': TaskData.data.results,
+                    });
+            }
+            catch (err) {
+                console.log(err.message);
+            }
     }
 
     render() {
@@ -121,5 +123,19 @@ export default App;
 
 
 
-
+//        axios
+//            .all([requestUser, requestProject, requestTask])
+//            .then(
+//                axios.spread((...responses) => {
+//
+//                    const responseOne = responses[0].data;
+//                    const responseTwo = responses[1].data.results;
+//                    const responseThree = responses[2].data.results;
+//
+//                    console.log(responseOne, responseTwo, responseThree);
+//                    })
+//                )
+//                .catch(errors => {console.error(errors)
+//                })
+//    }
 

@@ -5,13 +5,13 @@ const TaskItem = ({task}) => {
     return (
         <tr>
             <td>
-                {task.Project}
+                {task.Project.name}
             </td>
             <td>
                 {task.description}
             </td>
             <td>
-                {task.assigned_to}
+                {task.assigned_to.last_name}
             </td>
         </tr>
        )
