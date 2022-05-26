@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken import views
 
 from mainapp.views import UserModelViewSet, UserRoleModelViewSet, \
     ProjectModelViewSet, TaskModelViewSet, UserRetrieveUpdatelViewSet
@@ -18,6 +19,8 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/users/<int:pk>/retrieve-update',
          UserRetrieveUpdatelViewSet.as_view(), name='user_retrieve_update'),
+    path('api-token-auth/', views.obtain_auth_token)
+
 
 ]
 
