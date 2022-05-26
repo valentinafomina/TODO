@@ -34,9 +34,9 @@ class Command(BaseCommand):
                             role=UserRole.objects.get(name='manager'),
                             )
 
-        AuthUser.objects.all().delete()
-        AuthUser.objects.create_superuser('admin', 'admin@admin.local',
-                                          'admin', first_name='admin')
+        # AuthUser.objects.all().delete()
+        # AuthUser.objects.create_superuser('admin', 'admin@admin.local',
+        #                                   'admin', first_name='admin')
 
         Project.objects.all().delete()
         Project.objects.create(name='Curiosity', repo='https://github/curiosity',

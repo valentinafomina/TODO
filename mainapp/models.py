@@ -1,5 +1,5 @@
 from django.utils import timezone
-
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -14,14 +14,16 @@ class UserRole(models.Model):
     )
 
 
-class User(models.Model):
-    username = models.CharField(max_length=64)
+class User(AbstractUser):
+    username = models.CharField(max_length=64, unique=True)
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     email = models.CharField(max_length=64, unique=True)
     role = models.ForeignKey(UserRole, verbose_name='Роль',
-                             on_delete=models.CASCADE)
+                             on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(default=True, verbose_name='активный')
+    # groups = related_name='non-admin'
+    # user_permissions = 'non-admin'
 
 
 class Project(models.Model):
