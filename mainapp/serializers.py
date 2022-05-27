@@ -34,4 +34,4 @@ class TaskModelSerializer(ModelSerializer):
 
     class Meta:
         model = Task
-        fields =['Project', 'assigned_to', 'created_by', 'updated_at']
+        fields =['Project', 'description', 'assigned_to', 'created_by', 'updated_at']
