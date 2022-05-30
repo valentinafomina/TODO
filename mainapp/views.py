@@ -20,6 +20,7 @@ class TaskPaginator(LimitOffsetPagination):
 class UserRoleModelViewSet(ModelViewSet):
     queryset = UserRole.objects.all()
     serializer_class = UserRoleModelSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserRetrieveUpdatelViewSet(RetrieveUpdateAPIView):
@@ -56,5 +57,3 @@ class TaskModelViewSet(ModelViewSet):
 class UserModelViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
