@@ -2,16 +2,17 @@ import React from 'react'
 
 
 const TaskItem = ({task}) => {
+//console.log(typeof task.Project)
     return (
         <tr>
             <td>
-                {task.Project.name}
+                {task.Project}
             </td>
             <td>
                 {task.description}
             </td>
             <td>
-                {task.assigned_to.last_name}
+                {task.assigned_to}
             </td>
         </tr>
        )

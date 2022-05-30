@@ -2,7 +2,7 @@ from rest_framework.generics import  RetrieveUpdateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
+from rest_framework import status, permissions
 
 from .models import User, UserRole, Project, Task
 from .serializers import UserModelSerializer, UserRoleModelSerializer, \
@@ -20,6 +20,7 @@ class TaskPaginator(LimitOffsetPagination):
 class UserRoleModelViewSet(ModelViewSet):
     queryset = UserRole.objects.all()
     serializer_class = UserRoleModelSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserRetrieveUpdatelViewSet(RetrieveUpdateAPIView):

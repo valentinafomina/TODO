@@ -1,6 +1,7 @@
 import React from 'react'
 
 
+
 const ProjectItem = ({project}) => {
     return (
         <tr>
@@ -8,7 +9,7 @@ const ProjectItem = ({project}) => {
                 {project.name}
             </td>
             <td>
-                {project.owner.last_name}
+                {project.owner}
             </td>
         </tr>
        )
