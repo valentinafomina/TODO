@@ -6,7 +6,7 @@ from rest_framework import status, permissions
 
 from .models import User, UserRole, Project, Task
 from .serializers import UserModelSerializer, UserRoleModelSerializer, \
-    ProjectModelSerializer, TaskModelSerializer
+    UserModelAdvancedSerializer, ProjectModelSerializer, TaskModelSerializer
 
 
 class ProjectPaginator(LimitOffsetPagination):
@@ -56,4 +56,13 @@ class TaskModelViewSet(ModelViewSet):
 
 class UserModelViewSet(ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserModelSerializer
+    # serializer_class = UserModelSerializer
+
+    def get_serializer_class(self):
+        if self.request.version == '2.0':
+            print(f'request: {self.headers["Vary"]}')
+            return UserModelAdvancedSerializer
+        else:
+            print(f'request: {self.request}')
+            return UserModelSerializer
+
