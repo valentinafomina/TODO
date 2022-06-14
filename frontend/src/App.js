@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import './App.css';
 import axios from 'axios'
 import {BrowserRouter, Route, NavLink, Switch, Link} from 'react-router-dom'
@@ -8,6 +8,8 @@ import UserList from './components/Users.js'
 import ProjectList from './components/Projects.js'
 import TaskList from './components/Tasks.js'
 import LoginForm from './components/Auth.js'
+import ProjectForm from './components/ProjectForm.js'
+import TaskForm from './components/TaskForm.js'
 
 
 class App extends React.Component {
@@ -18,7 +20,7 @@ class App extends React.Component {
             'users': [],
             'projects': [],
             'tasks': [],
-            'token': ''
+            'token': '',
         }
     }
 
@@ -40,11 +42,14 @@ class App extends React.Component {
                 'tasks': TaskData.data.results,
                 }
                 );
-            }
+            console.log(this.state.projects)
+        }
+
         catch (err) {
             console.log(err.message);
-            }
+        }
     }
+
 
     get_token(username, password) {
         axios.post('http://127.0.0.1:8000/api-token-auth/', {username: username, password: password})
@@ -90,12 +95,9 @@ class App extends React.Component {
     createProject(name, owner) {
         const headers = this.get_headers()
         const data = {name: name, owner: owner}
-        axios.post('http://127.0.0.1:8000/api/projects/', data, {headers, headers}).
+        axios.post(`http://127.0.0.1:8000/api/projects/`, data, {headers}).
             then(response => {
                 let new_project = response.data
-                const owner = this.state.owner.filter((project) => project.id ===
-                new_project.owner)[0]
-                new_project.owner = owner
                 this.setState({projects: [...this.state.projects, new_project]})
             }
         ).catch(error => console.log(error))
@@ -104,22 +106,22 @@ class App extends React.Component {
 
     deleteProject(id) {
         const headers = this.get_headers()
-        axios.delete('http://127.0.0.1:8000/api/projects/${id}', {headers, headers})
+        axios.delete(`http://127.0.0.1:8000/api/projects/${id}`, {headers})
             .then(response => {
                 this.setState({projects: this.state.projects.filter((project)=>project.id !== id)})
             }).catch(error => console.log(error))
         }
 
-    createTask(name, owner) {
+    createTask(description, created_by, project) {
         const headers = this.get_headers()
         const data = {description: description, created_by: created_by, project: project}
-        axios.post('http://127.0.0.1:8000/api/tasks/', data, {headers, headers}).
+        axios.post(`http://127.0.0.1:8000/api/tasks/`, data, {headers, headers}).
             then(response => {
                 let new_task = response.data
                 const created_by = this.state.created_by.filter((task) => task.id === new_task.created_by)[0]
                 const project = this.state.project.filter((task) => task.id === new_task.project)[0]
-                new_project.created_by = created_by
-                new_project.project = project
+                new_task.created_by = created_by
+                new_task.project = project
                 this.setState({tasks: [...this.state.tasks, new_task]})
             }
         ).catch(error => console.log(error))
@@ -179,10 +181,10 @@ class App extends React.Component {
                     <Route exact path='/login' component={() => <LoginForm
                     get_token={(username, password) => this.get_token(username, password)} />} />
 //                    <Route exact path='/projects/create' component={() => <ProjectForm />}/>
-                    <Route exact path='/projects/create' component={() => <ProjectForm createProject={(name, owner) =>
+                    <Route exact path='/projects/create' component={() => <ProjectForm users={this.state.users} createProject={(name, owner) =>
                         this.createProject(name, owner)} />} />
-                    <Route exact path='/tasks/create' component={() => <TaskForm createTask={(description, created_by, project) =>
-                        this.createProject(description, created_by, project)} />} />
+                    <Route exact path='/tasks/create' component={() => <TaskForm users={this.state.users} createTask={(description, created_by, project) =>
+                        this.createTask(description, created_by, project)} />} />
                 </Switch>
                 </BrowserRouter>
         </div>

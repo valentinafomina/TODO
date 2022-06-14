@@ -12,14 +12,14 @@ const ProjectItem = ({project, deleteProject}) => {
                 {project.owner}
             </td>
             <td>
-                <button onClick={()=>deleteProject(item.id)} type='button'>Delete</button>
+                <button onClick={()=>deleteProject(project.id)} type='button'>Delete</button>
             </td>
         </tr>
        )
     }
 
 
-const ProjectList = ({projects, deleteBook}) => {
+const ProjectList = ({projects, deleteProject}) => {
     return (
     <div>
         <table>

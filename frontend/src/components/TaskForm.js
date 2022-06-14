@@ -3,7 +3,7 @@ import React from 'react'
 class TaskForm extends React.Component {
     constructor(props) {
     super(props)
-    this.state = {description: '', created_by: props.users[0].id, project: props.Projects[0].id}
+    this.state = {description: '', created_by: '', project: ''}
     }
 
     handleChange(event) {
