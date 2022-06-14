@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import './App.css';
 import axios from 'axios'
 import {BrowserRouter, Route, NavLink, Switch, Link} from 'react-router-dom'
@@ -8,6 +8,8 @@ import UserList from './components/Users.js'
 import ProjectList from './components/Projects.js'
 import TaskList from './components/Tasks.js'
 import LoginForm from './components/Auth.js'
+import ProjectForm from './components/ProjectForm.js'
+import TaskForm from './components/TaskForm.js'
 
 
 class App extends React.Component {
@@ -18,7 +20,7 @@ class App extends React.Component {
             'users': [],
             'projects': [],
             'tasks': [],
-            'token': ''
+            'token': '',
         }
     }
 
@@ -40,11 +42,14 @@ class App extends React.Component {
                 'tasks': TaskData.data.results,
                 }
                 );
-            }
+            console.log(this.state.projects)
+        }
+
         catch (err) {
             console.log(err.message);
-            }
+        }
     }
+
 
     get_token(username, password) {
         axios.post('http://127.0.0.1:8000/api-token-auth/', {username: username, password: password})
@@ -58,7 +63,7 @@ class App extends React.Component {
     set_token(token) {
         const cookies = new Cookies()
         cookies.set('token', token)
-        this.setState({'token': token}, ()=>this.load_data())
+        this.setState({'token': token}, ()=>this.loadData())
 
     }
 
@@ -87,6 +92,50 @@ class App extends React.Component {
         return headers
         }
 
+    createProject(name, owner) {
+        const headers = this.get_headers()
+        const data = {name: name, owner: owner}
+        axios.post(`http://127.0.0.1:8000/api/projects/`, data, {headers}).
+            then(response => {
+                let new_project = response.data
+                this.setState({projects: [...this.state.projects, new_project]})
+            }
+        ).catch(error => console.log(error))
+    }
+
+
+    deleteProject(id) {
+        const headers = this.get_headers()
+        axios.delete(`http://127.0.0.1:8000/api/projects/${id}`, {headers})
+            .then(response => {
+                this.setState({projects: this.state.projects.filter((project)=>project.id !== id)})
+            }).catch(error => console.log(error))
+        }
+
+    createTask(description, created_by, project) {
+        const headers = this.get_headers()
+        const data = {description: description, created_by: created_by, project: project}
+        axios.post(`http://127.0.0.1:8000/api/tasks/`, data, {headers, headers}).
+            then(response => {
+                let new_task = response.data
+                const created_by = this.state.created_by.filter((task) => task.id === new_task.created_by)[0]
+                const project = this.state.project.filter((task) => task.id === new_task.project)[0]
+                new_task.created_by = created_by
+                new_task.project = project
+                this.setState({tasks: [...this.state.tasks, new_task]})
+            }
+        ).catch(error => console.log(error))
+    }
+
+
+    deleteTask(id) {
+        const headers = this.get_headers()
+        axios.delete('http://127.0.0.1:8000/api/tasks/${id}', {headers, headers})
+            .then(response => {
+                this.setState({projects: this.state.tasks.filter((task)=>task.id !== id)})
+            }).catch(error => console.log(error))
+    }
+
 
     componentDidMount() {
         this.get_token_from_storage()
@@ -99,13 +148,19 @@ class App extends React.Component {
                 <nav>
                         <ul>
                             <li>
-                                <NavLink to='/'>Users</NavLink>
+                            <NavLink exact
+                              to="/"
+
+                            >
+                              Users
+                            </NavLink>
+
                             </li>
                             <li>
                                 <NavLink to='/projects'>Projects</NavLink>
                             </li>
                             <li>
-                                <NavLink to='/tasks'>Tasks</NavLink>
+                                <NavLink to='/tasks' >Tasks</NavLink>
                             </li>
 
                             <li>
@@ -118,12 +173,18 @@ class App extends React.Component {
                 <Switch>
                     <Route exact path='/' component={() => <UserList users={this.state.users} />} />
                     <Route exact path='/users' component={() => <UserList users={this.state.users} />} />
-                    <Route exact path='/projects' component={() => <ProjectList projects={this.state.projects} />} />
-                    <Route exact path='/tasks' component={() => <TaskList tasks={this.state.tasks} />} />
+                    <Route exact path='/projects' component={() => <ProjectList projects={this.state.projects}
+                        deleteProject={(id)=>this.deleteProject(id)}/>} />
+                    <Route exact path='/tasks' component={() => <TaskList tasks={this.state.tasks}
+                        deleteTask={(id)=>this.deleteTask(id)}/>}/>} />
 //                    <Route exact path='/login' component={() => <LoginForm />} />
                     <Route exact path='/login' component={() => <LoginForm
                     get_token={(username, password) => this.get_token(username, password)} />} />
-
+//                    <Route exact path='/projects/create' component={() => <ProjectForm />}/>
+                    <Route exact path='/projects/create' component={() => <ProjectForm users={this.state.users} createProject={(name, owner) =>
+                        this.createProject(name, owner)} />} />
+                    <Route exact path='/tasks/create' component={() => <TaskForm users={this.state.users} createTask={(description, created_by, project) =>
+                        this.createTask(description, created_by, project)} />} />
                 </Switch>
                 </BrowserRouter>
         </div>
@@ -205,3 +266,5 @@ export default App;
 //                .catch(errors => {console.error(errors)
 //                })
 //    }
+
+//                                <NavLink to="/" >Users</NavLink>
